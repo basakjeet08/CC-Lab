@@ -4,6 +4,7 @@ struct Process{
     int arrivalTime , burstTime , completionTime , waitingTime , pid;
 };
 
+
 // This function takes the input of all the process
 void getProcesses(struct Process process[] , int number){
     for(int i = 0 ; i < number ; i++){
@@ -19,6 +20,12 @@ void getProcesses(struct Process process[] , int number){
     }
 }
 
+void swapProcess(struct Process process[] , int index1 , int index2){
+    struct Process temp = process[index1];
+    process[index1] = process[index2];
+    process[index2] = temp;
+}
+
 // This function schedules / sorts the processes according to the scheduing Algorithm
 void sortProcess(struct Process process[] , int number){
     for(int i = 0 ; i < number ; i++){
@@ -27,9 +34,7 @@ void sortProcess(struct Process process[] , int number){
             if(process[j].arrivalTime < process[lowest].arrivalTime)
                 lowest = j;
         
-        struct Process temp = process[lowest];
-        process[lowest] = process[i];
-        process[i] = temp;
+        swapProcess(process , i , lowest);
     }
 }
 
@@ -37,11 +42,23 @@ void sortProcess(struct Process process[] , int number){
 double runProcess(struct Process process[] , int number){
     int currentTime = 0;
     int totalWaitingTime = 0;
+
+
     for(int i = 0 ; i < number ; i++){
         if(process[i].arrivalTime >= currentTime)
             currentTime = process[i].arrivalTime;
-        else
+        else{
+            int lowest = i;
+            int j = i + 1;
+
+            while(process[j].arrivalTime <= currentTime){
+                if(process[j].burstTime < process[i].burstTime)
+                    lowest = j;
+                j++;
+            }
+            swapProcess(process , lowest , i);
             process[i].waitingTime = currentTime - process[i].arrivalTime;
+        }
         
         totalWaitingTime += process[i].waitingTime;
         process[i].completionTime = process[i].burstTime + currentTime;
@@ -49,6 +66,7 @@ double runProcess(struct Process process[] , int number){
     }
     return (double)totalWaitingTime / number;
 }
+
 
 // This process displays all the process data along with the average waiting Time
 void showProcess(struct Process process[] , int number , double avgWaitingTime){
@@ -71,7 +89,7 @@ int main(){
     struct Process process[number]; // Initializing the Processes
 
     getProcesses(process , number); // Getting the Process input
-    sortProcess(process , number); // Scheduling or Sorting the process according to Arrival Time
+    sortProcess(process , number); // Sorting the process according to Arrival Time
 
     // Running the process to get the completion and waiting time. 
     double avgWaitingTime = runProcess(process , number);
