@@ -20,6 +20,7 @@ void getProcesses(struct Process process[] , int number){
     }
 }
 
+// This function swaps two different process 
 void swapProcess(struct Process process[] , int index1 , int index2){
     struct Process temp = process[index1];
     process[index1] = process[index2];
