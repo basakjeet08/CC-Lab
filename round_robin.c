@@ -57,11 +57,6 @@ double runProcess(struct Process process[] , int number , int totalTime){
         i = (i + 1) % number;
     }
 
-    for(int i = 0 ; i < number ; i++){
-        process[i].waitingTime = process[i].completionTime - process[i].burstTime;
-        totalWaitingTime += process[i].waitingTime;
-    }
-
     return (double)totalWaitingTime / number;
 }
 
